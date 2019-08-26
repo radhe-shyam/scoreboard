@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import './App.css';
 
 class Team extends Component {
@@ -44,16 +43,30 @@ class Team extends Component {
         <h2>{this.props.name}</h2>
         <h1>{this.state.score}</h1>
         <button onClick={this.increaseScore}>+2</button>
+        <button>Close</button>
       </React.Fragment>
     );
   }
 }
 class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      teams: [{
+        name: "Eagles",
+        active: true
+      }, {
+        name: "Hawks",
+        active: false
+      }]
+    };
+  }
   render() {
     return (
       <div className="App">
-        <Team name="Eagles"></Team>
-        <Team name="Hawks"></Team>
+        {this.state.teams.map((team) => {
+          { return team.active == true ? <Team name={team.name}></Team> : '' }
+        })}
       </div>
     );
   }
