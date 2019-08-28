@@ -15,7 +15,7 @@ class Team extends Component {
 			score: this.state.score + 2,
 		});
 	}
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		console.log('componentWillMount 2');
 	}
 	componentDidMount() {
@@ -25,7 +25,7 @@ class Team extends Component {
 		console.log('shouldComponentUpdate 5');
 		return true;
 	}
-	componentWillUpdate() {
+	UNSAFE_componentWillUpdate() {
 		console.log('componentWillUpdate 6');
 	}
 	componentDidUpdate() {
@@ -55,14 +55,34 @@ class Scoreboard extends Component {
 	constructor() {
 		super();
 		this.state = {
-			teams: [{
-				name: "Eagles",
-				active: true
-			}, {
-				name: "Hawks",
-				active: true
-			}]
+			teams: []
 		};
+	}
+	UNSAFE_componentWillMount() {
+		fetch('http://jsonplaceholder.typicode.com/users')
+			.then(res => res.json())
+			.then((data) => {
+				data = data.map(x => { x.active = true; return x; });
+				this.setState({
+					teams: data
+				});
+			})
+			.catch(console.log)
+	}
+	componentDidMount() {
+		fetch('http://jsonplaceholder.typicode.com/users', { 
+			method: 'post', 
+			headers: { 'content-type': 'application/json' }, 
+			body: JSON.stringify({ "data": "radhe" }) 
+		})
+			.then(res => res.json())
+			.then((data) => {
+				data = data.map(x => { x.active = true; return x; });
+				this.setState({
+					teams: data
+				});
+			})
+			.catch(console.log)
 	}
 
 	onRemoveTeam(team) {
