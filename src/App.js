@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import { BrowserRouter as Router, Route, Link, Redirect, Switch } from 'react-router-dom';
 
 class Team extends Component {
 	constructor(props) {
@@ -49,7 +50,8 @@ class Team extends Component {
 		);
 	}
 }
-class App extends Component {
+
+class Scoreboard extends Component {
 	constructor() {
 		super();
 		this.state = {
@@ -84,20 +86,52 @@ class App extends Component {
 		teams[teamIndex].active = false;
 		this.setState({ teams });
 	}
-	render() {
-		return (
-			<div className="App">
-				{this.state.teams.map((team, index) => {
-					return team.active ? <Team
-						key={index}
-						onDisableTeam={this.onDisableTeam.bind(this, team)}
-						onRemoveTeam={this.onRemoveTeam.bind(this, team)}
-						name={team.name}
-					></Team> : '';
-				})}
-			</div>
-		);
-	}
+	render = () => (
+		<div className="App">
+			{this.state.teams.map((team, index) => {
+				return team.active ? <Team
+					key={index}
+					onDisableTeam={this.onDisableTeam.bind(this, team)}
+					onRemoveTeam={this.onRemoveTeam.bind(this, team)}
+					name={team.name}
+				></Team> : '';
+			})}
+		</div>
+	);
 }
+class App extends Component {
+	render = () => (
+		<Router>
+			<ul>
+				<li>
+					<Link to="/">Home</Link>
+				</li>
+				<li>
+					<Link to="/about">About</Link>
+				</li>
+				<li>
+					<Link to="/topics">Topics</Link>
+				</li>
+				<li>
+					<Link to="/protected/hum">Protected</Link>
+				</li>
+				<li>
+					<Link to="/protected2/tum">Protected2</Link>
+				</li>
+			</ul>
+			<Switch>
+				<Route exact={true} path={"/"} component={Scoreboard} ></Route>
+				<Route path={"/about"} render={() => (<h4>About page</h4>)} ></Route>
+				<Route path={"/topics"} render={() => (<h4>topics page</h4>)} ></Route>
+				<PrivateRoute path={"/protected/:id"} component={protectedRoute}>Protected</PrivateRoute>
+				<PrivateRoute path={"/protected2/:id"} component={protectedRoute}>Protected</PrivateRoute>
+			</Switch>
+		</Router>
+	);
+}
+
+const PrivateRoute = ({ component: Component, ...rest }) => (<Route render={props => (true ? <Component {...props} {...rest} /> : <Redirect to={"/"} />)} />);
+
+const protectedRoute = (props, rest) => (<h4>{props.location.pathname}</h4>);
 
 export default App;
